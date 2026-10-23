@@ -165,7 +165,7 @@
 
   <div class="cta">
     <div><strong>Doing this for a whole team, all year?</strong>
-      <p>The batch version takes a timesheet export and gives every employee's code TT total for the W-2, with the working for each week. It runs in your browser, so payroll data never leaves your computer.</p></div>
+      <p>The batch version takes a timesheet export and gives every employee's code TT total for the W-2, with the working for each week. It also totals reported tips for code TP and fills in box 14b. It runs in your browser, so payroll data never leaves your computer.</p></div>
     <a href="https://sandcdigitalproducts.gumroad.com/l/codett">Get the batch tool</a>
   </div>
 
@@ -210,6 +210,8 @@
     <li><a href="california-daily-overtime/">California daily overtime and code TT: what counts</a></li>
     <li><a href="december-january-pay/">Week ends in December, paid in January: which W-2?</a></li>
     <li><a href="salaried-and-day-rate/">Code TT for salaried non-exempt and day-rate employees</a></li>
+    <li><a href="w2-tips-code-tp/">How to report tips on the 2026 W-2: box 12 code TP and box 14b</a></li>
+    <li><a href="tipped-occupation-codes/">Treasury tipped occupation codes: full list for box 14b</a></li>
   </ul>
 
   <footer>
@@ -277,12 +279,46 @@
     return null;
   }
 
+  // Treasury Tipped Occupation Codes (final regulations, April 2026). 000 = not on the list.
+  const TTOC = {
+    '101': 'Bartenders', '102': 'Wait Staff', '103': 'Food and Beverage Servers, Nonrestaurant',
+    '104': 'Dining Room and Cafeteria Attendants and Bartender Helpers', '105': 'Chefs and Cooks', '106': 'Food Preparation Workers',
+    '107': 'Fast Food and Counter Workers', '108': 'Dishwashers', '109': 'Host Staff, Restaurant, Lounge, and Coffee Shop', '110': 'Bakers',
+    '201': 'Gambling Dealers', '202': 'Gambling Change Persons and Booth Cashiers', '203': 'Gambling Cage Workers',
+    '204': 'Gambling and Sports Book Writers and Runners', '205': 'Dancers', '206': 'Musicians and Singers', '207': 'Disc Jockeys, Except Radio',
+    '208': 'Entertainers and Performers', '209': 'Digital Content Creators', '210': 'Ushers, Lobby Attendants, and Ticket Takers',
+    '211': 'Locker Room, Coatroom, and Dressing Room Attendants',
+    '301': 'Baggage Porters and Bellhops', '302': 'Concierges', '303': 'Hotel, Motel, and Resort Desk Clerks', '304': 'Maids and Housekeeping Cleaners',
+    '401': 'Home Maintenance and Repair Workers', '402': 'Home Landscaping and Groundskeeping Workers', '403': 'Home Electricians',
+    '404': 'Home Plumbers', '405': 'Home Heating and Air Conditioning Mechanics and Installers', '406': 'Home Appliance Installers and Repairers',
+    '407': 'Home Cleaning Service Workers', '408': 'Locksmiths', '409': 'Roadside Assistance Workers',
+    '501': 'Personal Care and Service Workers', '502': 'Private Event Planners', '503': 'Private Event and Portrait Photographers',
+    '504': 'Private Event Videographers', '505': 'Event Officiants', '506': 'Pet and Show Animal Caretakers', '507': 'Tutors',
+    '508': 'Nannies and Babysitters', '509': 'Visual Artists', '510': 'Floral Designers',
+    '601': 'Skincare Specialists', '602': 'Massage Therapists', '603': 'Barbers, Hairdressers, Hairstylists, and Cosmetologists',
+    '604': 'Shampooers', '605': 'Manicurists and Pedicurists', '606': 'Eyebrow and Eyelash Technicians', '607': 'Makeup Artists',
+    '608': 'Exercise Trainers and Group Fitness Instructors', '609': 'Tattoo Artists and Piercers', '610': 'Tailors',
+    '611': 'Shoe and Leather Workers and Repairers',
+    '701': 'Golf Caddies', '702': 'Self-Enrichment Teachers', '703': 'Recreational and Tour Pilots', '704': 'Tour Guides',
+    '705': 'Travel Guides', '706': 'Sports and Recreation Instructors',
+    '801': 'Parking and Valet Attendants', '802': 'Taxi and Rideshare Drivers and Chauffeurs', '803': 'Shuttle Drivers',
+    '804': 'Goods Delivery People', '805': 'Personal Vehicle and Equipment Cleaners', '806': 'Private and Charter Bus Drivers',
+    '807': 'Water Taxi Operators and Charter Boat Workers', '808': 'Rickshaw, Pedicab, and Carriage Drivers', '809': 'Home Movers',
+    '810': 'Gas Pump Attendants',
+  };
+  function tipCodeOf(v) {
+    const m = String(v == null ? '' : v).trim().match(/^(\d{1,3})(?!\d)/);
+    return m ? m[1].padStart(3, '0') : '';
+  }
+
   // Rows from the template, one per employee per workweek per pay rate:
-  //   Employee, Employee ID, Week Ending, Pay Date, Hours Worked, Hourly Rate, Bonus/Other Pay, Bonus Pay Date, Exempt
+  //   Employee, Employee ID, Week Ending, Pay Date, Hours Worked, Hourly Rate, Bonus/Other Pay, Bonus Pay Date, Exempt,
+  //   and optionally Cash & Charged Tips, Tipped Occupation Code. A tips-only row (no hours) needs just a pay date.
   // Bonus/Other Pay is paid with the week unless Bonus Pay Date says it was paid later; the extra
   // overtime it creates then belongs to the year it is paid (29 CFR 778.209, IRS FS-2026-13 Q3).
   function computeYear(rows, year) {
     const weeks = new Map();
+    const tips = new Map();   // employee key -> { employee, employeeId, byCode: Map, lines }
     const warnings = [];
     const idsByName = new Map();
     rows.forEach((r, i) => {
@@ -292,6 +328,25 @@
       const wk = parseDate(r.weekEnding);
       const pd = r.payDate && String(r.payDate).trim() ? parseDate(r.payDate) : wk;
       if (!name && !id) { if (Object.values(r).some((v) => String(v || '').trim())) warnings.push({ line, msg: 'no employee name or ID; row skipped' }); return; }
+      // Tips: counted in the year they're reported/paid; a row can be tips only.
+      const tipText = String(r.tips == null ? '' : r.tips).trim();
+      const hasWork = ['hours', 'rate', 'extraPay'].some((k) => String(r[k] == null ? '' : r[k]).trim() !== '');
+      if (tipText !== '') {
+        const amt = num(tipText);
+        const td = pd || wk;
+        if (Number.isNaN(amt)) warnings.push({ line, msg: 'tips amount is not a number; ignored' });
+        else if (!td) warnings.push({ line, msg: 'tips need a pay date (or week ending) to know their year; ignored' });
+        else if (amt && td.y === year) {
+          const ek = id || name.toLowerCase();
+          let t = tips.get(ek);
+          if (!t) { t = { employee: name, employeeId: id, byCode: new Map(), lines: [] }; tips.set(ek, t); }
+          const code = tipCodeOf(r.tipCode);
+          if (String(r.tipCode == null ? '' : r.tipCode).trim() && !code) warnings.push({ line, msg: 'tipped occupation code should be 3 digits (e.g. 102); treated as missing' });
+          t.byCode.set(code, round2((t.byCode.get(code) || 0) + amt));
+          t.lines.push(line);
+        }
+      }
+      if (!hasWork && tipText !== '') return;   // tips-only row
       if (!wk) { warnings.push({ line, msg: 'week ending date missing or unreadable; row skipped' }); return; }
       if (!pd) { warnings.push({ line, msg: 'pay date unreadable; row skipped' }); return; }
       if (name) {
@@ -350,12 +405,35 @@
       e.total = round2(e.total + yearAmount);
     }
     detail.sort((a, b) => (a.employee || a.employeeId).localeCompare(b.employee || b.employeeId) || a.weekEnding.localeCompare(b.weekEnding));
-    const summary = Array.from(employees.values()).sort((a, b) => (a.employee || a.employeeId).localeCompare(b.employee || b.employeeId));
-    for (const e of summary) {
+    for (const e of employees.values()) {
       if (e.exemptWeeks && e.exemptWeeks < e.weeks) warnings.push({ line: null, msg: `${e.employee || e.employeeId} is marked exempt in some weeks but not others; check their FLSA status` });
     }
+    // Tips: box 12 code TP (all cash and charged tips reported to the employer) plus up to two box 14b codes.
+    // With three or more jobs the IRS allows any two; if any tips came from a job not on the list, 000 must be one of them.
+    for (const [ek, t] of tips) {
+      let e = employees.get(ek);
+      if (!e) { e = { employee: t.employee, employeeId: t.employeeId, weeks: 0, otWeeks: 0, otHours: 0, total: 0, exemptWeeks: 0 }; employees.set(ek, e); }
+      const codes = Array.from(t.byCode.entries()).sort((a, b) => b[1] - a[1]);
+      const total = round2(codes.reduce((n, c) => n + c[1], 0));
+      e.tips = total;
+      e.tipBox = 'TP';
+      const named = codes.filter((c) => c[0] && c[1] > 0);
+      const listed = named.filter((c) => c[0] !== '000');
+      const has000 = named.some((c) => c[0] === '000');
+      // Most tips first; when any tips came from an unlisted job, 000 takes the second slot (or stays first if it's the largest).
+      e.tipCodes = !has000 ? listed.slice(0, 2).map((c) => c[0])
+        : named[0][0] === '000' ? ['000'].concat(listed.slice(0, 1).map((c) => c[0])) : [listed[0][0], '000'];
+      const who = t.employee || t.employeeId;
+      if (total < 0) warnings.push({ line: null, msg: `${who}: tips add up to less than zero; check the entries` });
+      if (codes.some((c) => !c[0] && c[1])) warnings.push({ line: null, msg: `${who}: some tips have no tipped occupation code. Add their 3-digit code (000 if their job isn't on the Treasury list)` });
+      for (const [c] of named) if (c !== '000' && !TTOC[c]) warnings.push({ line: null, msg: `${who}: ${c} is not a Treasury tipped occupation code; check it` });
+      if (named.length > 2) warnings.push({ line: null, msg: `${who}: tips in ${named.length} jobs; box 14b holds two codes. Showing ${e.tipCodes.join(', ')}${has000 ? ' (000 must be one of them when any tips came from a job not on the list)' : ' (the IRS lets you report any two)'}` });
+    }
+    const summary = Array.from(employees.values()).sort((a, b) => (a.employee || a.employeeId).localeCompare(b.employee || b.employeeId));
+    for (const e of summary) if (e.tips == null) { e.tips = 0; e.tipBox = 'TP'; e.tipCodes = []; }
     const outside = detail.filter((d) => !d.inYear).length;
-    return { year, summary, detail, warnings, outsideYear: outside, grandTotal: round2(summary.reduce((n, e) => n + e.total, 0)) };
+    return { year, summary, detail, warnings, outsideYear: outside, grandTotal: round2(summary.reduce((n, e) => n + e.total, 0)),
+      tipsTotal: round2(summary.reduce((n, e) => n + (e.tips || 0), 0)), tipBox: 'TP' };
   }
 
   // Minimal CSV parser (quotes, commas, CRLF) -> array of objects keyed by normalized header.
@@ -368,7 +446,9 @@
     [/^(rate|hourly rate|pay rate|base rate)$/i, 'rate'],
     [/^(bonus\/other pay|bonus|other pay|bonus \/ other pay|nondiscretionary pay|extra pay)$/i, 'extraPay'],
     [/^(bonus pay date|bonus paid date|bonus paid on)$/i, 'bonusPayDate'],
-    [/^(exempt|flsa exempt|exempt\?|exempt or not covered)$/i, 'exempt']
+    [/^(exempt|flsa exempt|exempt\?|exempt or not covered)$/i, 'exempt'],
+    [/^(cash (&|and) charged tips|tips|cash tips|tips reported|reported tips)$/i, 'tips'],
+    [/^(tipped occupation code|occupation code|ttoc|tip code|box 14b)$/i, 'tipCode']
   ];
   function parseCSV(text) {
     const out = [];
@@ -401,7 +481,7 @@
     return { rows, missing, unknown };
   }
 
-  const api = { computeWeek, computeYear, parseCSV, parseDate, round2 };
+  const api = { computeWeek, computeYear, parseCSV, parseDate, round2, TTOC, tipCodeOf };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.OTEngine = api;
 })(typeof window !== 'undefined' ? window : globalThis);
