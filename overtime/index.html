@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qualified Overtime Calculator for Employers (W-2 Box 12 Code TT) – Free</title>
+<meta name="description" content="Free calculator for employers: work out the qualified overtime premium to report in W-2 box 12, code TT, with the regular rate, multiple pay rates and bonuses handled and every step shown.">
+<link rel="canonical" href="https://sandc-extensions.github.io/overtime/">
+<meta property="og:title" content="Qualified Overtime Calculator for Employers (W-2 Code TT)">
+<meta property="og:description" content="Work out the code TT overtime premium for any workweek, with every step shown.">
+<style>
+  :root {
+    --ink: #13212e; --muted: #556270; --line: #dfe5ea; --bg: #f6f8f9; --card: #ffffff;
+    --accent: #0f6b4f; --accent-soft: #e5f3ed; --warn: #8a5300; --warn-soft: #fff4e0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header { background: var(--ink); color: #fff; }
+  header .wrap { padding-top: 34px; padding-bottom: 30px; }
+  .kicker { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #9fd8c3; font-weight: 600; }
+  h1 { font-size: clamp(26px, 4.4vw, 38px); line-height: 1.15; margin: 8px 0 10px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: #c9d4dc; max-width: 640px; }
+  main { padding: 26px 0 60px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .calc { display: grid; grid-template-columns: 1.1fr 1fr; gap: 22px; margin-top: -48px; }
+  @media (max-width: 760px) { .calc { grid-template-columns: 1fr; margin-top: -30px; } }
+  h2 { font-size: 22px; margin: 40px 0 10px; }
+  h3 { font-size: 16px; margin: 0 0 12px; }
+  label.l { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin: 14px 0 6px; }
+  .rates { display: grid; gap: 8px; }
+  .calc > * { min-width: 0; }
+  .rate, .rate-head { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) 32px; gap: 8px; align-items: center; }
+  input[type=text], input[type=number] { width: 100%; font: inherit; padding: 9px 11px; border: 1px solid #c8d1d8; border-radius: 8px; background: #fff; color: var(--ink); }
+  input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .rate-head { font-size: 12px; color: var(--muted); margin-bottom: -2px; }
+  .x { border: none; background: none; color: var(--muted); font-size: 20px; cursor: pointer; border-radius: 6px; height: 36px; }
+  .x:hover { background: var(--bg); }
+  .add { margin-top: 8px; font: inherit; font-size: 14px; background: none; border: 1px dashed #b5c1ca; border-radius: 8px; padding: 7px 10px; cursor: pointer; color: var(--accent); width: 100%; }
+  .hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .check { display: flex; gap: 8px; align-items: flex-start; margin-top: 14px; font-size: 14px; }
+  .check input { margin-top: 4px; accent-color: var(--accent); }
+  .result { display: flex; flex-direction: column; }
+  .big { background: var(--accent-soft); border-radius: 12px; padding: 16px 18px; }
+  .big .lbl { font-size: 13px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+  .big .val { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .steps { margin: 14px 0 0; padding: 0; list-style: none; font-size: 15px; }
+  .steps li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .steps li span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+  .steps .how { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
+  .note { margin-top: 12px; font-size: 13.5px; background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 9px 11px; display: none; }
+  .note.show { display: block; }
+  .cta { margin-top: 26px; background: var(--ink); color: #fff; border-radius: 14px; padding: 22px; display: flex; gap: 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .cta p { margin: 4px 0 0; color: #c9d4dc; max-width: 520px; }
+  .cta a { background: #3fc28f; color: #06291c; font-weight: 700; text-decoration: none; padding: 12px 18px; border-radius: 10px; white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: #eef2f4; font-size: 13px; }
+  details { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 8px 0; }
+  summary { font-weight: 600; cursor: pointer; }
+  footer { border-top: 1px solid var(--line); padding: 22px 0 40px; font-size: 13px; color: var(--muted); }
+</style>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Is the code TT amount the same as the overtime on the paycheck?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Generally no. Code TT is only the federally required premium, the half in time-and-a-half. An employee who works 45 hours at $20 an hour earns $150 of overtime pay for the extra 5 hours, but only $50 is qualified overtime for code TT."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do I include California daily overtime?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Only the part that is also federal overtime. Federal overtime starts after 40 hours in a workweek. Daily overtime in a week under 40 hours is required by state law, not the FLSA, so it is not qualified overtime."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What if I pay double time?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Only the federally required half-time premium counts. If an employee works 50 hours at $20 and you pay double time for the last 10, qualified overtime is still $100 (half of $20 times 10 hours), as in the IRS's own example."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Which year does a workweek belong to?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Generally, the year it was paid. A workweek that ends in late December but is paid in January belongs on next year's W-2. If a bonus for an earlier week is paid later (a quarterly bonus, say), the extra overtime it creates counts in the year the bonus is paid. The batch tool handles both with pay dates."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do bonuses change the amount?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Non-discretionary bonuses (ones the employee was promised or expected, such as attendance or production bonuses) are part of the regular rate, so they raise the premium. A bonus that covers several weeks should be spread over the workweeks it was earned in. Discretionary bonuses are left out."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What if a W-2 already went out with the wrong amount?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The IRS says to issue a corrected Form W-2c to the employee and the Social Security Administration as soon as possible. Employees can only use the amount shown on a W-2 or W-2c."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I enter salaried, day-rate or weekend-premium workers?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "For a salaried non-exempt employee, use an hourly rate of weekly salary divided by the hours the salary is meant to cover. For day-rate or piece-rate pay, enter the hours at a rate of 0 and put the week's total in the bonus field. Weekend, holiday or contract premium hours go in at the base rate, since those extra premiums are not part of the regular rate."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is there a cap on what I report?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. The employee's deduction is capped at $12,500 ($25,000 on a joint return) and phases out above $150,000 of modified AGI ($300,000 joint), but the employer generally reports the full qualified overtime paid, even above the cap."
+   }
+  }
+ ]
+}
+</script>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kicker">Free tool · Tax year 2026</div>
+  <h1>Qualified overtime calculator for employers</h1>
+  <p>Work out the overtime premium to report in W-2 box 12, code TT, for any workweek. Multiple pay rates, bonuses and shift differentials are handled, and every step is shown.</p>
+</div></header>
+
+<main><div class="wrap">
+  <div class="calc">
+    <div class="card">
+      <h3>One employee, one workweek</h3>
+      <label class="l">Hours worked at each pay rate</label>
+      <div class="rate-head"><span>Hours</span><span>Hourly rate ($)</span><span></span></div>
+      <div class="rates" id="rates"></div>
+      <button class="add" id="add" type="button">+ Add another pay rate</button>
+      <p class="hint">Enter straight-time base rates only, including for weekend or holiday hours. Don't enter overtime pay, double time, or paid time off. Salaried non-exempt: use weekly salary ÷ the hours it covers. Day rate: hours at rate 0, day-rate total in the field below.</p>
+      <label class="l" for="extra">Bonuses, shift differentials, piece pay, day-rate pay or commissions earned this week ($)</label>
+      <input type="text" id="extra" inputmode="decimal" placeholder="0">
+      <p class="hint">Only pay the employee was promised or expected (non-discretionary). Leave out discretionary bonuses and expense reimbursements.</p>
+      <label class="check"><input type="checkbox" id="exempt"> Employee is exempt from, or not covered by, federal (FLSA) overtime</label>
+    </div>
+    <div class="card result">
+      <div class="big"><div class="lbl">Qualified overtime (code TT)</div><div class="val" id="out">$0.00</div></div>
+      <ul class="steps" id="steps"></ul>
+      <div class="note" id="note"></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div><strong>Doing this for a whole team, all year?</strong>
+      <p>The batch version takes a timesheet export and gives every employee's code TT total for the W-2, with the working for each week. It runs in your browser, so payroll data never leaves your computer.</p></div>
+    <a href="https://sandcdigitalproducts.gumroad.com/l/codett">Get the batch tool</a>
+  </div>
+
+  <h2>How the code TT amount is worked out</h2>
+  <p>For tax year 2026, employers report qualified overtime compensation in box 12 of Form W-2 with code TT. It is only the overtime premium the federal Fair Labor Standards Act (FLSA) requires: the "half" in time-and-a-half, not the full overtime paycheck (<a href="https://www.irs.gov/pub/taxpros/fs-2026-13.pdf">IRS FS-2026-13</a>; <a href="https://www.irs.gov/pub/irs-pdf/iw2w3.pdf">W-2 instructions</a>).</p>
+  <table>
+    <tr><th>Step</th><th>Calculation</th></tr>
+    <tr><td>1. Regular rate</td><td>All pay for the workweek, including non-discretionary bonuses and shift differentials, divided by hours actually worked</td></tr>
+    <tr><td>2. Overtime hours</td><td>Hours worked over 40 in the workweek</td></tr>
+    <tr><td>3. Qualified overtime</td><td>½ × regular rate × overtime hours, rounded to the cent for each workweek</td></tr>
+    <tr><td>4. Box 12, code TT</td><td>Generally, the total of step 3 for every workweek paid in the calendar year</td></tr>
+  </table>
+
+  <h2>What counts and what doesn't</h2>
+  <table>
+    <tr><th>Situation</th><th>Counts toward code TT?</th></tr>
+    <tr><td>Hours over 40 in a workweek for a non-exempt employee</td><td>Yes, the half-time premium only</td></tr>
+    <tr><td>Double time or any premium above time-and-a-half</td><td>Only the FLSA-required half-time portion</td></tr>
+    <tr><td>Daily overtime under state law (for example, California over 8 hours a day) in a week under 40 hours</td><td>No</td></tr>
+    <tr><td>Overtime paid only because of a union contract or company policy</td><td>No, unless the FLSA also requires it</td></tr>
+    <tr><td>Employees exempt from, or not covered by, FLSA overtime (executive, administrative, professional and others)</td><td>No</td></tr>
+    <tr><td>Weekend, holiday or contract premium rates (e.g. time-and-a-half for Sundays regardless of hours)</td><td>Left out of the regular rate; enter those hours at the base rate</td></tr>
+    <tr><td>Non-discretionary bonuses, shift differentials, piece pay</td><td>They raise the regular rate, so they raise the premium</td></tr>
+    <tr><td>Holiday, vacation or sick pay for time not worked</td><td>Left out of both pay and hours</td></tr>
+  </table>
+  <p class="hint">Sources: <a href="https://www.irs.gov/pub/taxpros/fs-2026-13.pdf">IRS FS-2026-13</a> and <a href="https://www.dol.gov/agencies/whd/fact-sheets/56a-regular-rate">DOL Fact Sheet #56A</a>.</p>
+
+  <h2>Questions employers ask</h2>
+  <details><summary>Is the code TT amount the same as the overtime on the paycheck?</summary><p>Generally no. Code TT is only the federally required premium, the half in time-and-a-half. An employee who works 45 hours at $20 an hour earns $150 of overtime pay for the extra 5 hours, but only $50 is qualified overtime for code TT.</p></details>
+<details><summary>Do I include California daily overtime?</summary><p>Only the part that is also federal overtime. Federal overtime starts after 40 hours in a workweek. Daily overtime in a week under 40 hours is required by state law, not the FLSA, so it is not qualified overtime.</p></details>
+<details><summary>What if I pay double time?</summary><p>Only the federally required half-time premium counts. If an employee works 50 hours at $20 and you pay double time for the last 10, qualified overtime is still $100 (half of $20 times 10 hours), as in the IRS&#x27;s own example.</p></details>
+<details><summary>Which year does a workweek belong to?</summary><p>Generally, the year it was paid. A workweek that ends in late December but is paid in January belongs on next year&#x27;s W-2. If a bonus for an earlier week is paid later (a quarterly bonus, say), the extra overtime it creates counts in the year the bonus is paid. The batch tool handles both with pay dates.</p></details>
+<details><summary>Do bonuses change the amount?</summary><p>Non-discretionary bonuses (ones the employee was promised or expected, such as attendance or production bonuses) are part of the regular rate, so they raise the premium. A bonus that covers several weeks should be spread over the workweeks it was earned in. Discretionary bonuses are left out.</p></details>
+<details><summary>What if a W-2 already went out with the wrong amount?</summary><p>The IRS says to issue a corrected Form W-2c to the employee and the Social Security Administration as soon as possible. Employees can only use the amount shown on a W-2 or W-2c.</p></details>
+<details><summary>How do I enter salaried, day-rate or weekend-premium workers?</summary><p>For a salaried non-exempt employee, use an hourly rate of weekly salary divided by the hours the salary is meant to cover. For day-rate or piece-rate pay, enter the hours at a rate of 0 and put the week&#x27;s total in the bonus field. Weekend, holiday or contract premium hours go in at the base rate, since those extra premiums are not part of the regular rate.</p></details>
+<details><summary>Is there a cap on what I report?</summary><p>No. The employee&#x27;s deduction is capped at $12,500 ($25,000 on a joint return) and phases out above $150,000 of modified AGI ($300,000 joint), but the employer generally reports the full qualified overtime paid, even above the cap.</p></details>
+
+  <footer>
+    <p>This calculator is general information to help you organize your own numbers. It is not tax, payroll or legal advice, and it doesn't decide whether an employee is exempt. It covers standard 40-hour workweeks; it doesn't handle special FLSA methods (such as hospital 8/80 schedules, public-sector work periods, fluctuating workweek salaries, the section 7(g)(2) rate-in-effect method or tipped-employee credits). Review the result with your payroll provider or tax professional before entering it on a W-2.</p>
+    <p>Made by Simple &amp; Clean Digital Products, LLC. Your entries stay in your browser; nothing is sent anywhere.</p>
+  </footer>
+</div></main>
+
+<script>
+// Qualified overtime (W-2 box 12, code TT) calculation engine.
+// Rules follow IRS FS-2026-13 and DOL Fact Sheet #56A:
+//   regular rate   = included pay for the workweek / hours actually worked
+//   overtime hours = hours worked over 40 in the FLSA workweek
+//   qualified OT   = 0.5 x regular rate x overtime hours (the FLSA-required premium only)
+// State daily overtime, double time beyond 1.5x and contract premiums are not qualified.
+(function (root) {
+  const round2 = (x) => Math.round((x + Number.EPSILON) * 100) / 100;
+  const num = (v) => {
+    if (v === null || v === undefined) return 0;
+    const s = String(v).replace(/[$,\s]/g, '');
+    if (s === '') return 0;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : NaN;
+  };
+
+  // week: { lines: [{hours, rate}], extraPay, exempt, threshold }
+  function computeWeek(week) {
+    const threshold = week.threshold || 40;
+    const problems = [];
+    let hours = 0, pay = 0;
+    for (const l of week.lines || []) {
+      const h = num(l.hours), r = num(l.rate);
+      if (Number.isNaN(h) || Number.isNaN(r)) { problems.push('a number could not be read'); continue; }
+      if (h < 0 || r < 0) { problems.push('negative hours or rate'); continue; }
+      hours += h;
+      pay += h * r;
+    }
+    const extra = num(week.extraPay);
+    if (Number.isNaN(extra)) problems.push('extra pay could not be read');
+    else pay += extra;
+    const regularRate = hours > 0 ? pay / hours : 0;
+    const otHours = Math.max(0, hours - threshold);
+    const exempt = !!week.exempt;
+    const premium = exempt ? 0 : round2(0.5 * regularRate * otHours);
+    if (hours > 100) problems.push('more than 100 hours in one week; check the entry');
+    if (hours > 0 && regularRate === 0 && otHours > 0) problems.push('overtime hours with no pay entered');
+    return {
+      hours: round2(hours), includedPay: round2(pay), regularRate, regularRateShown: round2(regularRate),
+      otHours: round2(otHours), premium, exempt, problems
+    };
+  }
+
+  const truthy = (v) => /^(y|yes|true|1|x|exempt)$/i.test(String(v || '').trim());
+
+  // Parses dates like 2026-03-14, 3/14/2026, 03/14/26
+  function parseDate(v) {
+    const s = String(v || '').trim();
+    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return { y: +m[1], m: +m[2], d: +m[3], iso: `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}` };
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (m) {
+      const y = m[3].length === 2 ? 2000 + +m[3] : +m[3];
+      return { y, m: +m[1], d: +m[2], iso: `${y}-${m[1].padStart(2, '0')}-${m[2].padStart(2, '0')}` };
+    }
+    return null;
+  }
+
+  // Rows from the template, one per employee per workweek per pay rate:
+  //   Employee, Employee ID, Week Ending, Pay Date, Hours Worked, Hourly Rate, Bonus/Other Pay, Bonus Pay Date, Exempt
+  // Bonus/Other Pay is paid with the week unless Bonus Pay Date says it was paid later; the extra
+  // overtime it creates then belongs to the year it is paid (29 CFR 778.209, IRS FS-2026-13 Q3).
+  function computeYear(rows, year) {
+    const weeks = new Map();
+    const warnings = [];
+    const idsByName = new Map();
+    rows.forEach((r, i) => {
+      const line = i + 2;   // header is line 1
+      const name = String(r.employee || '').trim();
+      const id = String(r.employeeId || '').trim();
+      const wk = parseDate(r.weekEnding);
+      const pd = r.payDate && String(r.payDate).trim() ? parseDate(r.payDate) : wk;
+      if (!name && !id) { if (Object.values(r).some((v) => String(v || '').trim())) warnings.push({ line, msg: 'no employee name or ID; row skipped' }); return; }
+      if (!wk) { warnings.push({ line, msg: 'week ending date missing or unreadable; row skipped' }); return; }
+      if (!pd) { warnings.push({ line, msg: 'pay date unreadable; row skipped' }); return; }
+      if (name) {
+        if (!idsByName.has(name.toLowerCase())) idsByName.set(name.toLowerCase(), new Set());
+        idsByName.get(name.toLowerCase()).add(id);
+      }
+      if (!(r.payDate && String(r.payDate).trim()) && wk.m === 12 && wk.d > 20) warnings.push({ line, msg: `${name || id}, week ending ${wk.iso}: no pay date. If it was paid in January, add the pay date so it counts in the right year` });
+      const key = (id || name.toLowerCase()) + '|' + wk.iso;
+      let w = weeks.get(key);
+      if (!w) {
+        w = { employee: name, employeeId: id, weekEnding: wk.iso, payDate: pd.iso, payYear: pd.y, lines: [], extraNow: 0, later: new Map(), exempt: false, srcLines: [] };
+        weeks.set(key, w);
+      }
+      if (pd.iso !== w.payDate) warnings.push({ line, msg: `${name || id}, week ending ${wk.iso}: rows have different pay dates; using ${w.payDate}` });
+      if (String(r.hours || '').trim() !== '' || String(r.rate || '').trim() !== '') w.lines.push({ hours: r.hours, rate: r.rate });
+      const extra = num(r.extraPay);
+      if (Number.isNaN(extra)) warnings.push({ line, msg: 'bonus/other pay is not a number; ignored' });
+      else if (extra) {
+        const bd = r.bonusPayDate && String(r.bonusPayDate).trim() ? parseDate(r.bonusPayDate) : null;
+        if (r.bonusPayDate && String(r.bonusPayDate).trim() && !bd) warnings.push({ line, msg: 'bonus pay date unreadable; treated as paid with the week' });
+        if (bd && bd.iso !== w.payDate) w.later.set(bd.iso, (w.later.get(bd.iso) || 0) + extra);
+        else w.extraNow += extra;
+      }
+      if (truthy(r.exempt)) w.exempt = true;
+      w.srcLines.push(line);
+    });
+    for (const [n, ids] of idsByName) if (ids.size > 1 && ids.has('')) warnings.push({ line: null, msg: `"${n}" appears with and without an employee ID; their weeks may be split. Fill in the ID on every row` });
+
+    const employees = new Map();
+    const detail = [];
+    for (const w of weeks.values()) {
+      const base = computeWeek({ lines: w.lines, extraPay: w.extraNow, exempt: w.exempt });
+      for (const p of base.problems) warnings.push({ line: w.srcLines[0], msg: `${w.employee || w.employeeId}, week ending ${w.weekEnding}: ${p}` });
+      // Premium paid with the week, then any extra premium from bonuses paid later.
+      const parts = [{ payDate: w.payDate, year: w.payYear, amount: base.premium }];
+      let res = base, cum = w.extraNow, prev = base.premium;
+      for (const d of Array.from(w.later.keys()).sort()) {
+        cum += w.later.get(d);
+        res = computeWeek({ lines: w.lines, extraPay: cum, exempt: w.exempt });
+        parts.push({ payDate: d, year: +d.slice(0, 4), amount: round2(res.premium - prev), bonus: true });
+        prev = res.premium;
+      }
+      const yearAmount = round2(parts.filter((p) => p.year === year).reduce((n, p) => n + p.amount, 0));
+      const inYear = parts.some((p) => p.year === year);
+      detail.push(Object.assign({ employee: w.employee, employeeId: w.employeeId, weekEnding: w.weekEnding, payDate: w.payDate, inYear, parts, yearAmount }, res));
+      if (!inYear) continue;
+      const ek = w.employeeId || w.employee.toLowerCase();
+      let e = employees.get(ek);
+      if (!e) { e = { employee: w.employee, employeeId: w.employeeId, weeks: 0, otWeeks: 0, otHours: 0, total: 0, exemptWeeks: 0 }; employees.set(ek, e); }
+      if (w.payYear === year) {
+        e.weeks++;
+        if (res.exempt) e.exemptWeeks++;
+        if (res.premium > 0) e.otWeeks++;
+        e.otHours = round2(e.otHours + (res.exempt ? 0 : res.otHours));
+      }
+      e.total = round2(e.total + yearAmount);
+    }
+    detail.sort((a, b) => (a.employee || a.employeeId).localeCompare(b.employee || b.employeeId) || a.weekEnding.localeCompare(b.weekEnding));
+    const summary = Array.from(employees.values()).sort((a, b) => (a.employee || a.employeeId).localeCompare(b.employee || b.employeeId));
+    for (const e of summary) {
+      if (e.exemptWeeks && e.exemptWeeks < e.weeks) warnings.push({ line: null, msg: `${e.employee || e.employeeId} is marked exempt in some weeks but not others; check their FLSA status` });
+    }
+    const outside = detail.filter((d) => !d.inYear).length;
+    return { year, summary, detail, warnings, outsideYear: outside, grandTotal: round2(summary.reduce((n, e) => n + e.total, 0)) };
+  }
+
+  // Minimal CSV parser (quotes, commas, CRLF) -> array of objects keyed by normalized header.
+  const HEADER_MAP = [
+    [/^(employee|employee name|name)$/i, 'employee'],
+    [/^(employee id|emp id|id|employee #|employee number)$/i, 'employeeId'],
+    [/^(week ending|week end|week ending date|workweek ending)$/i, 'weekEnding'],
+    [/^(pay date|check date|paid on)$/i, 'payDate'],
+    [/^(hours|hours worked|regular hours|total hours)$/i, 'hours'],
+    [/^(rate|hourly rate|pay rate|base rate)$/i, 'rate'],
+    [/^(bonus\/other pay|bonus|other pay|bonus \/ other pay|nondiscretionary pay|extra pay)$/i, 'extraPay'],
+    [/^(bonus pay date|bonus paid date|bonus paid on)$/i, 'bonusPayDate'],
+    [/^(exempt|flsa exempt|exempt\?|exempt or not covered)$/i, 'exempt']
+  ];
+  function parseCSV(text) {
+    const out = [];
+    let row = [], field = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+        else if (c === '"') q = false;
+        else field += c;
+      } else if (c === '"') q = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[i + 1] === '\n') i++;
+        row.push(field); field = '';
+        if (row.some((x) => x.trim() !== '')) out.push(row);
+        row = [];
+      } else field += c;
+    }
+    row.push(field);
+    if (row.some((x) => x.trim() !== '')) out.push(row);
+    if (!out.length) return { rows: [], missing: ['all columns'], unknown: [] };
+    const head = out[0].map((h) => h.replace(/^﻿/, '').trim());
+    const keys = head.map((h) => { const m = HEADER_MAP.find(([re]) => re.test(h)); return m ? m[1] : null; });
+    const need = ['weekEnding', 'hours', 'rate'];
+    const missing = need.filter((k) => keys.indexOf(k) < 0);
+    if (keys.indexOf('employee') < 0 && keys.indexOf('employeeId') < 0) missing.unshift('employee');
+    const unknown = head.filter((h, i) => !keys[i] && h);
+    const rows = out.slice(1).map((r) => { const o = {}; keys.forEach((k, i) => { if (k) o[k] = r[i]; }); return o; });
+    return { rows, missing, unknown };
+  }
+
+  const api = { computeWeek, computeYear, parseCSV, parseDate, round2 };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.OTEngine = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+const $ = (id) => document.getElementById(id);
+const money = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const hrs = (n) => (Math.round(n * 100) / 100).toLocaleString('en-US') + ' h';
+function addRate(h, r) {
+  const row = document.createElement('div');
+  row.className = 'rate';
+  row.innerHTML = '<input type="text" inputmode="decimal" placeholder="Hours" aria-label="Hours worked">' +
+    '<input type="text" inputmode="decimal" placeholder="Hourly rate ($)" aria-label="Hourly rate">' +
+    '<button class="x" type="button" aria-label="Remove this rate">×</button>';
+  const [a, b] = row.querySelectorAll('input');
+  a.value = h || ''; b.value = r || '';
+  row.querySelector('button').onclick = () => { if ($('rates').children.length > 1) { row.remove(); calc(); } };
+  $('rates').append(row);
+  row.addEventListener('input', calc);
+}
+function calc() {
+  const lines = Array.from($('rates').children).map((r) => { const [a, b] = r.querySelectorAll('input'); return { hours: a.value, rate: b.value }; });
+  const res = OTEngine.computeWeek({ lines, extraPay: $('extra').value, exempt: $('exempt').checked });
+  $('out').textContent = money(res.premium);
+  $('steps').innerHTML =
+    '<li><span>Hours worked<span class="how">all rates added together</span></span><span>' + hrs(res.hours) + '</span></li>' +
+    '<li><span>Pay included in the regular rate<span class="how">hours × rates, plus bonuses and differentials</span></span><span>' + money(res.includedPay) + '</span></li>' +
+    '<li><span>Regular rate<span class="how">' + money(res.includedPay) + ' ÷ ' + hrs(res.hours) + '</span></span><span>' + money(res.regularRate) + '/h</span></li>' +
+    '<li><span>Overtime hours<span class="how">hours over 40</span></span><span>' + hrs(res.otHours) + '</span></li>' +
+    '<li><span>Qualified overtime<span class="how">½ × ' + money(res.regularRate) + ' × ' + hrs(res.otHours) + '</span></span><span>' + money(res.premium) + '</span></li>';
+  const n = $('note');
+  if (res.exempt) { n.textContent = 'Employees exempt from, or not covered by, FLSA overtime have no qualified overtime, even if you pay them overtime.'; n.className = 'note show'; }
+  else if (res.problems.length) { n.textContent = 'Check your entries: ' + res.problems.join('; ') + '.'; n.className = 'note show'; }
+  else if (res.hours > 0 && res.otHours === 0) { n.textContent = 'No hours over 40 this week, so there is no qualified overtime, even if state law required daily overtime.'; n.className = 'note show'; }
+  else n.className = 'note';
+}
+addRate('45', '20');
+$('add').onclick = () => { addRate(); };
+$('extra').addEventListener('input', calc);
+$('exempt').addEventListener('change', calc);
+calc();
+</script>
+</body>
+</html>
