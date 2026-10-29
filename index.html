@@ -1,21 +1,60 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Simple &amp; Clean Digital Products – Browser Extensions</title>
-<style>body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:680px;margin:0 auto;padding:40px 20px;color:#16181D}h1{font-size:26px}li{margin:6px 0}</style></head>
-<body>
-<h1>Browser Extensions</h1>
-<p>Small, private Chrome extensions by Simple &amp; Clean Digital Products, LLC. None of them collect your data.</p>
-<ul>
-<li><strong>Hushplay</strong>: stops video and audio from playing on their own. <a href="hushplay/privacy.html">Privacy policy</a></li>
-<li><strong>LinkScrub</strong>: removes tracking from links. <a href="link-scrub/privacy.html">Privacy policy</a></li>
-<li><strong>Hushping</strong>: stops sites asking to send notifications. <a href="hushping/privacy.html">Privacy policy</a></li>
-<li><strong>Leftovers</strong> (Figma plugin): cleans up library leftovers in Figma files. <a href="leftovers/privacy.html">Privacy policy</a></li>
-<li><strong>Bindery</strong> (Figma plugin): binds hard-coded values to variables. <a href="bindery/privacy.html">Privacy policy</a></li>
-<li><strong>Typo Hunt</strong> (Figma plugin): spell checks every text layer. <a href="typohunt/privacy.html">Privacy policy</a></li>
-<li><strong>Reattach</strong> (Figma plugin): fixes detached components. <a href="reattach/privacy.html">Privacy policy</a></li>
-<li><strong>Twins</strong> (Figma plugin): merges duplicate styles and variables. <a href="twins/privacy.html">Privacy policy</a></li>
-<li><strong>Code TT Overtime Calculator</strong>: free W-2 box 12, code TT calculator for employers. <a href="overtime/">Open the calculator</a></li>
-<li><strong>Heft</strong> (Figma plugin): makes slow Figma files fast. <a href="heft/privacy.html">Privacy policy</a></li>
-<li><strong>Slim PDF</strong> (Figma plugin): exports small deck PDFs. <a href="slimpdf/privacy.html">Privacy policy</a></li>
-</ul>
-<p>Contact: <a href="mailto:sandcdigitalproducts@gmail.com">sandcdigitalproducts@gmail.com</a></p>
-</body></html>
+<title>S&amp;C Web Tools: small, private Chrome extensions and Figma plugins</title><meta name="description" content="Chrome extensions, Figma plugins and free web tools that each fix one annoying thing. No accounts, no tracking, no data collected."><link rel="canonical" href="https://webtools.sandcdigitalproducts.com/">
+<meta property="og:title" content="S&amp;C Web Tools: small, private Chrome extensions and Figma plugins"><meta property="og:description" content="Chrome extensions, Figma plugins and free web tools that each fix one annoying thing. No accounts, no tracking, no data collected."><meta property="og:url" content="https://webtools.sandcdigitalproducts.com/">
+<meta property="og:type" content="website"><link rel="icon" href="/assets/favicon.png"><style>:root{--ink:#13212e;--muted:#556270;--line:#dfe5ea;--bg:#f6f8f9;--card:#fff;--accent:#0f6b4f;--accent-soft:#e5f3ed;--warn:#8a5300;--warn-soft:#fff4e0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{background:var(--card);border-bottom:1px solid var(--line)}header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px}
+.brand{font-weight:700;color:var(--ink);text-decoration:none;font-size:17px}.brand span{color:var(--accent)}
+nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:15px}nav a:hover{color:var(--ink)}
+.hero{padding:56px 0 30px}.hero h1{font-size:clamp(28px,4.2vw,42px);line-height:1.15;margin:0 0 12px;max-width:760px}
+.hero p{color:var(--muted);font-size:18px;max-width:640px;margin:0}
+.pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:600;margin-bottom:14px}
+h2{font-size:22px;margin:40px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.card .top{display:flex;gap:14px;align-items:center}.card img.icon{width:48px;height:48px;border-radius:11px;flex:none}
+.card h3{margin:0;font-size:18px}.card p{margin:0;color:var(--muted);font-size:15px}.card .tag{font-size:12.5px;color:var(--muted)}
+.card .actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;padding-top:6px}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:9px 16px;border-radius:9px}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}.btn.soon{background:var(--warn-soft);color:var(--warn)}
+.signup{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:44px 0;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.signup h2{margin:0 0 4px;font-size:20px}.signup p{margin:0;color:var(--muted)}
+article{max-width:720px}article h1{font-size:clamp(26px,4vw,38px);line-height:1.2;margin:0 0 14px}
+article .lead{font-size:18px;color:var(--muted)}article img.shot{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);margin:22px 0;background:#fff}
+article ol{padding-left:22px}article li{margin:6px 0}.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0}
+.cta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:22px 0}.crumbs{font-size:14px;color:var(--muted);margin:28px 0 6px}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0;color:var(--muted);font-size:14px}footer a{color:var(--muted)}
+@media (max-width:560px){nav a{margin-left:12px;font-size:14px}.hero{padding:36px 0 18px}}</style></head><body>
+<header><div class="wrap"><a class="brand" href="/">S&amp;C <span>Web Tools</span></a>
+<nav><a href="/#chrome">Chrome</a><a href="/#figma">Figma</a><a href="/#free">Free tools</a></nav></div></header><main class="wrap"><section class="hero"><span class="pill">No accounts · No tracking · No data collected</span>
+<h1>Small tools that fix one annoying thing well.</h1>
+<p>Chrome extensions, Figma plugins and free web tools from Simple &amp; Clean Digital Products. Each one does a single job, runs entirely on your own computer and never collects your data.</p></section>
+<h2 id="chrome">Chrome extensions</h2><div class="grid"><div class="card"><div class="top"><img class="icon" src="/assets/hushplay-icon.png" alt="" width="48" height="48">
+<div><h3>Hushplay</h3><div class="tag">Chrome extension</div></div></div>
+<p>Stop videos and audio from playing on their own.</p><div class="actions"><a class="btn" href="https://chromewebstore.google.com/search/Hushplay" target="_blank" rel="noopener">Add to Chrome</a><a class="btn ghost" href="/hushplay/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/link-scrub-icon.png" alt="" width="48" height="48">
+<div><h3>LinkScrub</h3><div class="tag">Chrome extension</div></div></div>
+<p>Remove tracking codes from links.</p><div class="actions"><a class="btn" href="https://chromewebstore.google.com/search/LinkScrub" target="_blank" rel="noopener">Add to Chrome</a><a class="btn ghost" href="/link-scrub/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/hushping-icon.png" alt="" width="48" height="48">
+<div><h3>Hushping</h3><div class="tag">Chrome extension</div></div></div>
+<p>Stop sites asking to send you notifications.</p><div class="actions"><span class="btn soon">Coming soon</span><a class="btn ghost" href="/hushping/">How it works</a></div></div></div>
+<h2 id="figma">Figma plugins</h2><div class="grid"><div class="card"><div class="top"><img class="icon" src="/assets/heft-icon.png" alt="" width="48" height="48">
+<div><h3>Heft</h3><div class="tag">Figma plugin</div></div></div>
+<p>Make slow Figma files fast.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/heft/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/slimpdf-icon.png" alt="" width="48" height="48">
+<div><h3>Slim PDF</h3><div class="tag">Figma plugin</div></div></div>
+<p>Export small PDFs from Figma.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/slimpdf/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/typohunt-icon.png" alt="" width="48" height="48">
+<div><h3>Typo Hunt</h3><div class="tag">Figma plugin</div></div></div>
+<p>Spell check every layer at once.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/typohunt/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/leftovers-icon.png" alt="" width="48" height="48">
+<div><h3>Leftovers</h3><div class="tag">Figma plugin</div></div></div>
+<p>Clean up leftovers from removed libraries.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/leftovers/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/reattach-icon.png" alt="" width="48" height="48">
+<div><h3>Reattach</h3><div class="tag">Figma plugin</div></div></div>
+<p>Turn detached frames back into components.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/reattach/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/twins-icon.png" alt="" width="48" height="48">
+<div><h3>Twins</h3><div class="tag">Figma plugin</div></div></div>
+<p>Merge duplicate styles and variables.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/twins/">How it works</a></div></div><div class="card"><div class="top"><img class="icon" src="/assets/bindery-icon.png" alt="" width="48" height="48">
+<div><h3>Bindery</h3><div class="tag">Figma plugin</div></div></div>
+<p>Bind hard-coded values to variables.</p><div class="actions"><span class="btn soon">In review</span><a class="btn ghost" href="/bindery/">How it works</a></div></div></div>
+<h2 id="free">Free web tools</h2><div class="grid"><div class="card"><div class="top"><div><h3>Code TT Overtime Calculator</h3><div class="tag">Free web tool</div></div></div>
+<p>Works out qualified overtime for W-2 box 12, code TT, and tips for code TP, for one employee or a whole team.</p>
+<div class="actions"><a class="btn" href="/overtime/">Open the calculator</a></div></div></div><div class="signup"><div><h2>Get new tools first</h2><p>One short email when something new launches. No spam, unsubscribe anytime.</p></div>
+<a class="btn" href="https://sandcdigitalproducts.gumroad.com/" target="_blank" rel="noopener">Subscribe for updates</a></div></main><footer><div class="wrap">Small, private tools by Simple &amp; Clean Digital Products, LLC. None of them collect your data.<br>
+<a href="https://sandcdigitalproducts.com/">sandcdigitalproducts.com</a> · <a href="mailto:sandcdigitalproducts@gmail.com">sandcdigitalproducts@gmail.com</a></div></footer></body></html>
